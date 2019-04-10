@@ -1,144 +1,152 @@
-import React, { Component }       from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { Component } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+}                           from 'react-native';
 import {
   RTCPeerConnection,
   RTCIceCandidate,
   RTCSessionDescription,
-  RTCView,
   MediaStream,
   MediaStreamTrack,
+  RTCView,
   mediaDevices,
-}                                 from 'react-native-webrtc';
+}                           from 'react-native-webrtc';
 
-
-const configuration = { "iceServers": [{ "url": "stun:stun.l.google.com:19302" }] };
-const pc = new RTCPeerConnection(configuration);
-
-let isFront = true;
-mediaDevices.enumerateDevices().then(sourceInfos => {
-  console.log(sourceInfos);
-  let videoSourceId;
-  for (let i = 0; i < sourceInfos.length; i++) {
-    const sourceInfo = sourceInfos[i];
-    if (sourceInfo.kind === "video" && sourceInfo.facing === (isFront ? "front" : "back")) {
-      videoSourceId = sourceInfo.id;
-    }
-  }
-  mediaDevices.getUserMedia({
-    audio: true,
-    video: {
-      mandatory: {
-        minWidth: 500, // Provide your own width, height and frame rate here
-        minHeight: 300,
-        minFrameRate: 30,
-      },
-      facingMode: (isFront ? "user" : "environment"),
-      optional: (videoSourceId ? [{ sourceId: videoSourceId }] : []),
-    },
-  })
-    .then(stream => {
-      this.setState({ stream });
-    })
-    .catch(error => {
-      // Log error
-    });
-});
-
-pc.createOffer().then(desc => {
-  pc.setLocalDescription(desc).then(() => {
-    // Send pc.localDescription to peer
-  });
-});
-
-pc.onicecandidate = function (event) {
-  // send event.candidate to peer
-};
-
-let localStream;
-let container;
-
-async function initStream() {
-  mediaDevices.enumerateDevices().then(sourceInfos => {
-    console.log(sourceInfos);
-    let videoSourceId;
-    for (let i = 0; i < sourceInfos.length; i++) {
-      const sourceInfo = sourceInfos[i];
-      if (sourceInfo.kind === "video" && sourceInfo.facing === (isFront ? "front" : "back")) {
-        videoSourceId = sourceInfo.id;
-      }
-    }
-    mediaDevices.getUserMedia({
-      audio: true,
-      video: {
-        mandatory: {
-          minWidth: 500, // Provide your own width, height and frame rate here
-          minHeight: 300,
-          minFrameRate: 30,
-        },
-        facingMode: (isFront ? "user" : "environment"),
-        optional: (videoSourceId ? [{ sourceId: videoSourceId }] : []),
-      },
-    })
-      .then(stream => {
-        this.setState({ stream });
-      })
-      .catch(error => {
-        // Log error
-      });
-  });
-}
-
-async function getLocalStream(isFront, callback) {
-  let videoSourceId;
-  
-  try {
-    let stream = await mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        mandatory: {
-          minWidth: 640, // Provide your own width, height and frame rate here
-          minHeight: 360,
-          minFrameRate: 30,
-        },
-        facingMode: isFront ? "user" : "environment",
-        optional: videoSourceId ? [{ sourceId: videoSourceId }] : [],
-      },
-    });
-    await callback(stream);
-  } catch (e) {
-    console.log("logError", e);
-  }
-}
 
 export default class App extends Component {
   state = {
-    stream: null,
+    stream: "",
+    isFront: true,
+    videoSourceId: [],
+    sourceInfo: null,
+    mirror: false,
+    objectFit: 'contain',
   };
   
   async componentDidMount() {
-    await initStream();
+    await this.initStream();
   }
+  
+  initStream = async () => {
+    try {
+      const sourceInfos = await mediaDevices.enumerateDevices();
+      
+      await Promise.all(sourceInfos.map(async info => {
+        this.state.sourceInfo = info;
+        console.log(this.state.sourceInfo);
+        
+        if (this.state.sourceInfo.kind === "videoinput") {
+          this.state.videoSourceId = [...this.state.videoSourceId, this.state.sourceInfo];
+        }
+      }));
+      
+      console.log(this.state.videoSourceId);
+      
+      const stream = await mediaDevices.getUserMedia({
+        audio: true,
+        video: {
+          mandatory: {
+            minWidth: 500, // Provide your own width, height and frame rate here
+            minHeight: 300,
+            minFrameRate: 30,
+          },
+          facingMode: (this.state.isFront ? "user" : "environment"),
+          optional: (this.state.videoSourceId[0] ? [{ sourceId: this.state.videoSourceId[0] }] : []),
+        },
+      });
+      this.setState({ stream });
+      console.log(stream);
+    } catch (error) {console.log(error);}
+  };
+  
+  switchCamera = async () => {
+    this.setState({ isFront: !this.state.isFront });
+    await this.initStream();
+  };
+  
+  objectFit = () => {
+    if (this.state.objectFit === 'contain') {
+      this.setState({ objectFit: 'cover' });
+    }
+    if (this.state.objectFit === 'cover') {
+      this.setState({ objectFit: 'contain' });
+    }
+  };
   
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
+      <View style={s.container}>
+        <Text style={s.welcome}>Welcome to React Native!</Text>
         
-        <RTCView streamURL={this.state.stream.toURL()} style={styles.selfView}/>
+        <RTCView
+          style={s.selfView}
+          streamURL={this.state.stream.id}
+          mirror={this.state.mirror}
+          objectFit={this.state.objectFit}
+        />
+        
+        <TouchableOpacity
+          style={s.button}
+          onPress={this.switchCamera}
+        >
+          <Text style={s.buttonText}>Change Camera</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={s.button}
+          onPress={() => this.setState({ mirror: !this.state.mirror })}
+        >
+          <Text style={s.buttonText}>Mirror</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={s.buttonBig}
+          onPress={this.objectFit}
+        >
+          <Text style={s.buttonText}>Object Fit (contain/cover)</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  selfView: {
-    width: 200,
-    height: 150,
-  },
+const s = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
     justifyContent: "center",
     backgroundColor: "#F5FCFF",
+  },
+  button: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 50,
+    width: '50%',
+    backgroundColor: 'blue',
+    borderRadius: 10,
+    margin: 5,
+  },
+  buttonBig: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 50,
+    width: '70%',
+    backgroundColor: 'blue',
+    borderRadius: 10,
+    margin: 5,
+  },
+  buttonText: {
+    fontSize: 20,
+    color: 'white',
+  },
+  selfView: {
+    flex: 1,
+    width: '100%',
   },
   welcome: {
     fontSize: 20,
