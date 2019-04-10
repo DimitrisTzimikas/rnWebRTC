@@ -5,14 +5,15 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
-    "reload":"adb shell input keyevent 82 && adb shell input keyevent 66 && adb shell input keyevent 66",
-    "devmenu":"adb shell input keyevent 82",
-    "debug":"adb shell input keyevent 82 && adb shell input keyevent 61 && adb shell input keyevent 66 && adb shell input keyevent 66"
+    "reload": "adb shell input keyevent 82 && adb shell input keyevent 66 && adb shell input keyevent 66",
+    "devmenu": "adb shell input keyevent 82",
+    "debug": "adb shell input keyevent 82 && adb shell input keyevent 61 && adb shell input keyevent 66 && adb shell input keyevent 66"
   },
   "dependencies": {
     "react": "16.8.3",
     "react-native": "0.59.4",
-    "react-native-webrtc": "^1.69.1"
+    "react-native-webrtc": "1.69.1",
+    "socket.io-client": "2.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.4.3",
