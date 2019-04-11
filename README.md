@@ -1,6 +1,6 @@
 **Install**
 
 -  ```git clone "url"```
--  ```git cd rnWebRTC```
+-  ```cd rnWebRTC```
 -  ```npm i```
 -  ```react-native run-android```
