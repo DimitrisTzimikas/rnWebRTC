@@ -2,5 +2,5 @@
 
 -  ```git clone "url"```
 -  ```git cd rnWebRTC```
--  ```git i```
+-  ```npm i```
 -  ```react-native run-android```
