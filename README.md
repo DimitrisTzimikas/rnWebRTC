@@ -1,8 +1,6 @@
 **Install**
 
-```console
-git clone "url"
-git cd rnWebRTC
-git i
-git react-native run-android
-```
+1.  ```git clone "url"```
+2.  ```git cd rnWebRTC```
+3.  ```git i```
+4.  ```react-native run-android```
