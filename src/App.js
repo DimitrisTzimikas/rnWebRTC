@@ -31,9 +31,11 @@ export default class App extends Component {
   
   initStream = async () => {
     try {
+      // Get all devices (video/audio) in array list
       const sourceInfos = await mediaDevices.enumerateDevices();
       console.log(sourceInfos);
       
+      // Iterate the list above and find the front camera
       await Promise.all(sourceInfos.map(async sourceInfo => {
         console.log(sourceInfo);
         
@@ -42,6 +44,7 @@ export default class App extends Component {
         }
       }));
       
+      // Get the stream of front camera
       const stream = await mediaDevices.getUserMedia({
         audio: true,
         video: {
