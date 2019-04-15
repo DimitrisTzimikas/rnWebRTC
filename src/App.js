@@ -64,8 +64,14 @@ export default class App extends Component {
   };
   
   switchCamera = async () => {
-    this.setState({ isFront: !this.state.isFront });
-    await this.initStream();
+  
+    const { stream } = this.state;
+    stream.getVideoTracks().forEach(track => {
+      track._switchCamera();
+    });
+  
+    /*this.setState({ isFront: !this.state.isFront });
+     await this.initStream();*/
   };
   
   objectFit = () => {
