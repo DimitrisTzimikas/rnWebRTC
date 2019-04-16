@@ -98,11 +98,11 @@ const createPC = (socketId, isOffer) => {
   
   const createOffer = () => {
     let callback = desc => {
-      //console.log("createOffer", desc);
+      console.log("createOffer", desc);
       peer.setLocalDescription(desc, callback2, logError);
     };
     let callback2 = () => {
-      //console.log("setLocalDescription", peer.localDescription);
+      console.log("setLocalDescription", peer.localDescription);
       socket.emit("exchange", { to: socketId, sdp: peer.localDescription });
     };
     
