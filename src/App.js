@@ -20,7 +20,7 @@ import s                    from './style';
 
 YellowBox.ignoreWarnings(['Setting a timer', 'Unrecognized WebSocket connection', 'ListView is deprecated and will be removed']);
 
-const url = 'https://ac07cd91.ngrok.io';
+const url = 'https://ac07cd91.ngrok.io/';
 const socket = io.connect(url, { transports: ["websocket"] });
 const configuration = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 
