@@ -6,11 +6,6 @@ import {
   SafeAreaView,
 }                           from 'react-native';
 import {
-  RTCPeerConnection,
-  RTCIceCandidate,
-  RTCSessionDescription,
-  MediaStream,
-  MediaStreamTrack,
   RTCView,
   mediaDevices,
 }                           from 'react-native-webrtc';
@@ -64,15 +59,12 @@ export default class App extends Component {
     } catch (error) {console.log(error);}
   };
   
-  switchCamera = async () => {
-    
+  switchCamera = () => {
     const { stream } = this.state;
+    
     stream.getVideoTracks().forEach(track => {
       track._switchCamera();
     });
-    
-    /*this.setState({ isFront: !this.state.isFront });
-     await this.initStream();*/
   };
   
   objectFit = () => {
