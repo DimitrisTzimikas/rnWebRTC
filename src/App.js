@@ -20,7 +20,7 @@ import s                    from './style';
 
 YellowBox.ignoreWarnings(['Setting a timer', 'Unrecognized WebSocket connection', 'ListView is deprecated and will be removed']);
 
-const url = 'https://ac07cd91.ngrok.io/';
+const url = 'https://12c7a9c2.ngrok.io';
 const socket = io.connect(url, { transports: ["websocket"] });
 const configuration = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 
@@ -122,25 +122,6 @@ socket.on("exchange", data => {
   exchange(data);
 });
 
-const leave = socketId => {
-  console.log("leave", socketId);
-  
-  const peer = pcPeers[socketId];
-  
-  peer.close();
-  
-  delete pcPeers[socketId];
-  
-  const remoteList = container.state.remoteList;
-  
-  delete remoteList[socketId];
-  
-  container.setState({
-    info: "One peer leave!",
-    remoteList: remoteList,
-  });
-};
-
 const exchange = data => {
   const fromId = data.from;
   let pc;
@@ -165,11 +146,50 @@ const exchange = data => {
   }
 };
 
+const leave = socketId => {
+  console.log("leave", socketId);
+  
+  const peer = pcPeers[socketId];
+  
+  peer.close();
+  
+  delete pcPeers[socketId];
+  
+  const remoteList = container.state.remoteList;
+  
+  delete remoteList[socketId];
+  
+  container.setState({
+    info: "One peer leave!",
+    remoteList: remoteList,
+  });
+};
+
 const logError = error => {
   console.log("logError", error);
+  console.trace();
 };
 
 const mapHash = (hash, func) => {
+  
+  /*console.log("YOOOOOOOOO");
+  console.log(hash);
+  let x = Object.keys(hash)[0];
+  let xx = '';
+  
+  if (x !== undefined) {
+    console.log(x);
+    console.log(hash);
+    console.log(hash[x]);
+    
+    for (let i = 0; i <= hash[x].length - 1; i++) {
+      if (hash[x][i] !== '{' && hash[x][i] !== '}') {
+        xx += hash[x][i];
+        console.log(xx);
+      }
+    }
+  }*/
+  
   const array = [];
   for (const key in hash) {
     if (hash.hasOwnProperty(key)) {
@@ -216,11 +236,11 @@ export default class App extends Component {
     try {
       // Get all devices (video/audio) in array list
       const sourceInfos = await mediaDevices.enumerateDevices();
-      console.log(sourceInfos);
+      //console.log(sourceInfos);
       
       // Iterate the list above and find the front camera
       await Promise.all(sourceInfos.map(async sourceInfo => {
-        console.log(sourceInfo);
+        //console.log(sourceInfo);
         
         if (sourceInfo.kind === 'videoinput' && sourceInfo.label === 'Camera 1, Facing front, Orientation 270') {
           this.setState({ videoSourceId: sourceInfo.deviceId });
@@ -247,7 +267,7 @@ export default class App extends Component {
         localStream: stream,
         status: 'ready',
       });
-      console.log(stream);
+      //console.log(stream);
     } catch (error) {console.log(error);}
   };
   
