@@ -173,22 +173,22 @@ const logError = error => {
 const mapHash = (hash, func) => {
   
   /*console.log("YOOOOOOOOO");
-  console.log(hash);
-  let x = Object.keys(hash)[0];
-  let xx = '';
-  
-  if (x !== undefined) {
-    console.log(x);
-    console.log(hash);
-    console.log(hash[x]);
-    
-    for (let i = 0; i <= hash[x].length - 1; i++) {
-      if (hash[x][i] !== '{' && hash[x][i] !== '}') {
-        xx += hash[x][i];
-        console.log(xx);
-      }
-    }
-  }*/
+   console.log(hash);
+   let x = Object.keys(hash)[0];
+   let xx = '';
+   
+   if (x !== undefined) {
+   console.log(x);
+   console.log(hash);
+   console.log(hash[x]);
+   
+   for (let i = 0; i <= hash[x].length - 1; i++) {
+   if (hash[x][i] !== '{' && hash[x][i] !== '}') {
+   xx += hash[x][i];
+   console.log(xx);
+   }
+   }
+   }*/
   
   const array = [];
   for (const key in hash) {
@@ -271,14 +271,11 @@ export default class App extends Component {
     } catch (error) {console.log(error);}
   };
   
-  switchCamera = async () => {
+  switchCamera = () => {
     const { localStream } = this.state;
     localStream.getVideoTracks().forEach(track => {
       track._switchCamera();
     });
-    
-    /*this.setState({ isFront: !this.state.isFront });
-     await this.initStream();*/
   };
   
   objectFit = () => {
